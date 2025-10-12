@@ -12,9 +12,10 @@ interface ProductType {
 interface ProductItemProps {
   product: ProductType;
   onDelete: (id: number) => void;
+  onUpdate: (id: number) => void;
 }
 
-function ProductItem({ product, onDelete }: ProductItemProps) {
+function ProductItem({ product, onDelete, onUpdate }: ProductItemProps) {
   const { id, name, price, explanation } = product;
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -41,10 +42,25 @@ function ProductItem({ product, onDelete }: ProductItemProps) {
         onClick={() => {
           console.log("수정하기 : ", id);
           //setProducts(products.filter((product) => product.id !== id));
+          setIsEditMode((prev) => !prev);
         }}
       >
         수정하기
       </button>
+
+      {isEditMode && (
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            onUpdate(id);
+          }}
+        >
+          <input type="text" placeholder="상품 이름" />
+          <input type="text" placeholder="상품 설명" />
+          <input type="number" placeholder="상품 가격" />
+          <input type="submit" value="상품수정하기" />
+        </form>
+      )}
     </div>
   );
 }
@@ -82,6 +98,19 @@ function App() {
 
   const handleDelete = (id: number) =>
     setProducts(products.filter((product) => product.id !== id));
+
+  const handleUpdate = (id: number) => {
+    // 무엇인가를 업데이트하는 로직이다.
+    const updateProduct = {
+      id,
+      name: "수정된 상품",
+      explanation: "수정된 상품",
+      price: 0,
+    };
+    setProducts(
+      products.map((product) => (product.id === id ? updateProduct : product))
+    );
+  };
 
   return (
     <>
@@ -148,6 +177,7 @@ function App() {
           key={product.id}
           product={product}
           onDelete={handleDelete}
+          onUpdate={handleUpdate}
         />
       ))}
     </>
