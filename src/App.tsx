@@ -107,6 +107,7 @@ function App() {
         <input type="submit" value="상품 만들기" />
       </form>
 
+      {/*
       {products.map(({ id, name, price, explanation }) => (
         <div key={id}>
           <div>{id}</div>
@@ -134,6 +135,11 @@ function App() {
             수정하기
           </button>
         </div>
+      ))}
+    */}
+
+      {products.map((product) => (
+        <ProductItem key={product.id} product={product} />
       ))}
     </>
   );
