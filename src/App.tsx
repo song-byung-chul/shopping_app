@@ -11,9 +11,10 @@ interface ProductType {
 
 interface ProductItemProps {
   product: ProductType;
+  onDelete: (id: number) => void;
 }
 
-const ProductItem = ({ product }: ProductItemProps) => {
+function ProductItem({ product, onDelete }: ProductItemProps) {
   const { id, name, price, explanation } = product;
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -29,6 +30,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
         onClick={() => {
           console.log("삭제하기 : ", id);
           //setProducts(products.filter((product) => product.id !== id));
+          onDelete(id);
         }}
       >
         삭제하기
@@ -45,7 +47,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
       </button>
     </div>
   );
-};
+}
 
 function App() {
   /*
@@ -77,6 +79,9 @@ function App() {
     fakeId.current += 1;
     setProducts([...products, { ...newProduct, id: fakeId.current }]);
   };
+
+  const handleDelete = (id: number) =>
+    setProducts(products.filter((product) => product.id !== id));
 
   return (
     <>
@@ -139,7 +144,11 @@ function App() {
     */}
 
       {products.map((product) => (
-        <ProductItem key={product.id} product={product} />
+        <ProductItem
+          key={product.id}
+          product={product}
+          onDelete={handleDelete}
+        />
       ))}
     </>
   );
