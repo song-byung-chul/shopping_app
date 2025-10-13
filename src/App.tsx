@@ -12,12 +12,16 @@ interface ProductType {
 interface ProductItemProps {
   product: ProductType;
   onDelete: (id: number) => void;
-  onUpdate: (id: number) => void;
+  //onUpdate: (id: number) => void;
+  onUpdate: (product: ProductType) => void;
 }
 
 function ProductItem({ product, onDelete, onUpdate }: ProductItemProps) {
   const { id, name, price, explanation } = product;
   const [isEditMode, setIsEditMode] = useState(false);
+  const [editName, setEditName] = useState(product.name);
+  const [editExplanation, setEditExplanation] = useState(product.explanation);
+  const [editPrice, setEditPrice] = useState(product.price);
 
   return (
     <div>
@@ -52,12 +56,32 @@ function ProductItem({ product, onDelete, onUpdate }: ProductItemProps) {
         <form
           onSubmit={(event) => {
             event.preventDefault();
-            onUpdate(id);
+            onUpdate({
+              id,
+              name: editName,
+              price: editPrice,
+              explanation: editExplanation,
+            });
           }}
         >
-          <input type="text" placeholder="상품 이름" />
-          <input type="text" placeholder="상품 설명" />
-          <input type="number" placeholder="상품 가격" />
+          <input
+            type="text"
+            placeholder="상품 이름"
+            value={editName}
+            onChange={(event) => setEditName(event.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="상품 설명"
+            value={editExplanation}
+            onChange={(event) => setEditExplanation(event.target.value)}
+          />
+          <input
+            type="number"
+            placeholder="상품 가격"
+            value={editPrice}
+            onChange={(event) => setEditPrice(parseInt(event.target.value, 10))}
+          />
           <input type="submit" value="상품수정하기" />
         </form>
       )}
@@ -98,7 +122,7 @@ function App() {
 
   const handleDelete = (id: number) =>
     setProducts(products.filter((product) => product.id !== id));
-
+  /*
   const handleUpdate = (id: number) => {
     // 무엇인가를 업데이트하는 로직이다.
     const updateProduct = {
@@ -109,6 +133,20 @@ function App() {
     };
     setProducts(
       products.map((product) => (product.id === id ? updateProduct : product))
+    );
+  };
+  */
+
+  const handleUpdate = (updateProduct: {
+    id: number;
+    name: string;
+    explanation: string;
+    price: number;
+  }) => {
+    setProducts(
+      products.map((product) =>
+        product.id === updateProduct.id ? updateProduct : product
+      )
     );
   };
 
