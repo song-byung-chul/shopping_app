@@ -1,11 +1,12 @@
 // HomePage.tsx App.tsx 소스코드를 HomePage.tsx 로 복사 옮김
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useProductContext } from "../contexts/ProductContext";
 
 interface ProductType {
-  id: number;
+  //id: number;
+  id: string;
   name: string;
   explanation: string;
   price: number;
@@ -13,12 +14,13 @@ interface ProductType {
 
 interface ProductItemProps {
   product: ProductType;
-  onDelete: (id: number) => void;
+  //onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
   //onUpdate: (id: number) => void;
   onUpdate: (product: ProductType) => void;
 }
 
-function ProductItem({ product, onDelete, onUpdate }: ProductItemProps) {
+const ProductItem = ({ product, onDelete, onUpdate }: ProductItemProps) => {
   const { id, name, price, explanation } = product;
   const [isEditMode, setIsEditMode] = useState(false);
   const [editName, setEditName] = useState(product.name);
@@ -91,7 +93,7 @@ function ProductItem({ product, onDelete, onUpdate }: ProductItemProps) {
       )}
     </div>
   );
-}
+};
 
 function HomePage() {
   /*
@@ -114,21 +116,48 @@ function HomePage() {
   ]);
   */
 
-  const [products, setProducts] = useProductContext();
+  //const [products, setProducts] = useProductContext();
+  const [products, setProducts] = useState<ProductType[]>([]);
   const [name, setName] = useState("");
   const [explanation, setExplanation] = useState("");
   const [price, setPrice] = useState(0);
 
   //console.log(products);
 
+  /*
   const fakeId = useRef(0);
   const handleCreate = (newProduct: Omit<ProductType, "id">) => {
     fakeId.current += 1;
     setProducts([...products, { ...newProduct, id: fakeId.current }]);
+  };*/
+
+  const handleCreate = (newProduct: Omit<ProductType, "id">) => {
+    fetch("/product", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newProduct),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setProducts((prev) => [...prev, data.product]);
+      });
   };
 
+  /*
   const handleDelete = (id: number) =>
     setProducts(products.filter((product) => product.id !== id));
+  */
+
+  const handleDelete = (id: string) => {
+    fetch(`/product/${id}`, { method: "DELETE" }).then((response) => {
+      if (response.ok) {
+        setProducts(products.filter((product) => product.id !== id));
+      }
+    });
+  };
+
   /*
   const handleUpdate = (id: number) => {
     // 무엇인가를 업데이트하는 로직이다.
@@ -144,18 +173,34 @@ function HomePage() {
   };
   */
 
-  const handleUpdate = (updateProduct: {
-    id: number;
-    name: string;
-    explanation: string;
-    price: number;
-  }) => {
-    setProducts(
-      products.map((product) =>
-        product.id === updateProduct.id ? updateProduct : product
-      )
-    );
+  const handleUpdate = (updateProduct: ProductType) => {
+    fetch(`/product/${updateProduct.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(updateProduct),
+    }).then((response) => {
+      if (response.ok) {
+        setProducts(
+          products.map((product) =>
+            product.id === updateProduct.id ? updateProduct : product
+          )
+        );
+      }
+    });
   };
+
+  // API서버에서 상품목록 가져오기
+  useEffect(() => {
+    //fetch("http://localhost:3090/product") <== clent/package.json에 proxy설정
+    fetch("/product")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setProducts(data.products);
+      });
+  }, []);
 
   return (
     <>
