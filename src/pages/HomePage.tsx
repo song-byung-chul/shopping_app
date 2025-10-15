@@ -1,6 +1,8 @@
 // HomePage.tsx App.tsx 소스코드를 HomePage.tsx 로 복사 옮김
 
 import { useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import { useProductContext } from "../contexts/ProductContext";
 
 interface ProductType {
   id: number;
@@ -26,7 +28,9 @@ function ProductItem({ product, onDelete, onUpdate }: ProductItemProps) {
   return (
     <div>
       <div>{id}</div>
-      <div>{name}</div>
+      <div>
+        <Link to={`/${id}`}>{name}</Link>
+      </div>
       <div>{price}</div>
       <div>{explanation}</div>
 
@@ -100,7 +104,7 @@ function HomePage() {
     },
   ];*/
 
-  const [products, setProducts] = useState<ProductType[]>([
+  /*const [products, setProducts] = useState<ProductType[]>([
     {
       id: 0,
       name: "Iphone 13 Max",
@@ -108,6 +112,9 @@ function HomePage() {
       price: 123000,
     },
   ]);
+  */
+
+  const [products, setProducts] = useProductContext();
   const [name, setName] = useState("");
   const [explanation, setExplanation] = useState("");
   const [price, setPrice] = useState(0);
@@ -152,7 +159,7 @@ function HomePage() {
 
   return (
     <>
-      <h1>쇼핑몰 앱 만들어보기</h1>
+      <h1>쇼핑몰 앱 만들어보기 메인페이지</h1>
       <form
         onSubmit={(event) => {
           event.preventDefault();
