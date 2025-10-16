@@ -1,17 +1,20 @@
 // HomePage.tsx App.tsx 소스코드를 HomePage.tsx 로 복사 옮김
 
-import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { useProductContext } from "../contexts/ProductContext";
+//import { useEffect, useRef, useState } from "react";
+//import { Link } from "react-router-dom";
+//import { useProductContext } from "../contexts/ProductContext";
+import { ProductList } from "../components/home";
 
+/*
 interface ProductType {
   //id: number;
   id: string;
   name: string;
   explanation: string;
   price: number;
-}
-
+}*/
+// src/components/home/ProductItem.tsx 로 이동
+/*
 interface ProductItemProps {
   product: ProductType;
   //onDelete: (id: number) => void;
@@ -94,6 +97,7 @@ const ProductItem = ({ product, onDelete, onUpdate }: ProductItemProps) => {
     </div>
   );
 };
+*/
 
 function HomePage() {
   /*
@@ -116,12 +120,13 @@ function HomePage() {
   ]);
   */
 
+  /*
   //const [products, setProducts] = useProductContext();
   const [products, setProducts] = useState<ProductType[]>([]);
   const [name, setName] = useState("");
   const [explanation, setExplanation] = useState("");
   const [price, setPrice] = useState(0);
-
+*/
   //console.log(products);
 
   /*
@@ -130,7 +135,7 @@ function HomePage() {
     fakeId.current += 1;
     setProducts([...products, { ...newProduct, id: fakeId.current }]);
   };*/
-
+  /*
   const handleCreate = (newProduct: Omit<ProductType, "id">) => {
     fetch("/product", {
       method: "POST",
@@ -144,12 +149,12 @@ function HomePage() {
         setProducts((prev) => [...prev, data.product]);
       });
   };
-
+*/
   /*
   const handleDelete = (id: number) =>
     setProducts(products.filter((product) => product.id !== id));
   */
-
+  /*
   const handleDelete = (id: string) => {
     fetch(`/product/${id}`, { method: "DELETE" }).then((response) => {
       if (response.ok) {
@@ -157,7 +162,7 @@ function HomePage() {
       }
     });
   };
-
+*/
   /*
   const handleUpdate = (id: number) => {
     // 무엇인가를 업데이트하는 로직이다.
@@ -173,6 +178,7 @@ function HomePage() {
   };
   */
 
+  /*
   const handleUpdate = (updateProduct: ProductType) => {
     fetch(`/product/${updateProduct.id}`, {
       method: "PATCH",
@@ -190,7 +196,9 @@ function HomePage() {
       }
     });
   };
+  */
 
+  /*
   // API서버에서 상품목록 가져오기
   useEffect(() => {
     //fetch("http://localhost:3090/product") <== clent/package.json에 proxy설정
@@ -201,10 +209,15 @@ function HomePage() {
         setProducts(data.products);
       });
   }, []);
-
+*/
   return (
     <>
       <h1>쇼핑몰 앱 만들어보기 메인페이지</h1>
+      <ProductList />
+    </>
+
+    /*
+    <>
       <form
         onSubmit={(event) => {
           event.preventDefault();
@@ -231,7 +244,7 @@ function HomePage() {
         <input type="submit" value="상품 만들기" />
       </form>
 
-      {/*
+      /*
       {products.map(({ id, name, price, explanation }) => (
         <div key={id}>
           <div>{id}</div>
@@ -260,8 +273,8 @@ function HomePage() {
           </button>
         </div>
       ))}
-    */}
-
+    */
+    /*
       {products.map((product) => (
         <ProductItem
           key={product.id}
@@ -271,6 +284,7 @@ function HomePage() {
         />
       ))}
     </>
+    */
   );
 }
 
