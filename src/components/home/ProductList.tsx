@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { ProductType } from "../../types";
 import { ProductItem } from ".";
+import { CircularProgress } from "@mui/material";
 
 const ProductList = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleDelete = (id: string) => {
     fetch(`/product/${id}`, { method: "DELETE" }).then((response) => {
@@ -50,14 +52,20 @@ const ProductList = () => {
 
   // API서버에서 상품목록 가져오기
   useEffect(() => {
+    setIsLoading(true);
     //fetch("http://localhost:3090/product") <== clent/package.json에 proxy설정
     fetch("/product")
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
         setProducts(data.products);
-      });
+      })
+      .finally(() => setIsLoading(false));
   }, []);
+
+  if (isLoading) {
+    return <CircularProgress />;
+  }
 
   return (
     <ul>

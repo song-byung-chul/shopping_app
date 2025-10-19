@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import CreateIcon from "@mui/icons-material/Create";
 
 type Props = {
   children: React.ReactNode;
@@ -44,7 +45,8 @@ const Layout = ({ children }: Props) => {
 
       <Box sx={{ position: "fixed", bottom: "16px", right: "16px" }}>
         <Fab color="primary" onClick={handlePushCreatePage}>
-          추가하기
+          {/*추가하기*/}
+          <CreateIcon />
         </Fab>
       </Box>
     </>

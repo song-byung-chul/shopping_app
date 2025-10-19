@@ -2,13 +2,35 @@
 
 import { useState } from "react";
 import { ProductType } from "../../types";
+import { Button, Container, TextField, Typography } from "@mui/material";
 
 const ProductCreateForm = () => {
   const [name, setName] = useState("");
-  const [explanation, setExplanation] = useState("");
   const [price, setPrice] = useState(0);
+  const [explanation, setExplanation] = useState("");
 
-  const handleCreate = (newProduct: Omit<ProductType, "id">) => {
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+  };
+
+  const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPrice(Number(event.target.value));
+  };
+
+  const handleExplanationChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setExplanation(event.target.value);
+  };
+
+  const handleCreate = (event: React.FormEvent) => {
+    event.preventDefault();
+    const newProduct: Omit<ProductType, "id"> = {
+      name,
+      explanation,
+      price,
+    };
+
     fetch("/product", {
       method: "POST",
       headers: {
@@ -24,31 +46,75 @@ const ProductCreateForm = () => {
   };
 
   return (
-    <form
-      onSubmit={(event) => {
-        event.preventDefault();
-        handleCreate({ name, explanation, price });
-        //console.log("=== 제출 ===", name, price, explanation);
-        //setProducts([...products, { id: fakeId, name, explanation, price }]);
-      }}
-    >
-      <input
-        type="text"
-        placeholder="상품 이름"
-        onChange={(event) => setName(event.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="상품 설명"
-        onChange={(event) => setExplanation(event.target.value)}
-      />
-      <input
-        type="number"
-        placeholder="상품 가격"
-        onChange={(event) => setPrice(parseInt(event.target.value, 10))}
-      />
-      <input type="submit" value="상품 만들기" />
-    </form>
+    <>
+      <Container maxWidth="sm">
+        <Typography variant="h4" align="center" gutterBottom>
+          상품 생성
+        </Typography>
+        {/*
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            handleCreate({ name, explanation, price });
+            //console.log("=== 제출 ===", name, price, explanation);
+            //setProducts([...products, { id: fakeId, name, explanation, price }]);
+          }}
+        >
+          <input
+            type="text"
+            placeholder="상품 이름"
+            onChange={(event) => setName(event.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="상품 설명"
+            onChange={(event) => setExplanation(event.target.value)}
+          />
+          <input
+            type="number"
+            placeholder="상품 가격"
+            onChange={(event) => setPrice(parseInt(event.target.value, 10))}
+          />
+          <input type="submit" value="상품 만들기" />
+        </form>
+        */}
+        <form onSubmit={handleCreate}>
+          <TextField
+            label="상품 이름"
+            fullWidth
+            value={name}
+            onChange={handleNameChange}
+            margin="normal"
+          />
+          <TextField
+            label="가격"
+            type="number"
+            fullWidth
+            value={price}
+            onChange={handlePriceChange}
+            margin="normal"
+          />
+          <TextField
+            label="상품 설명"
+            fullWidth
+            multiline
+            rows={4}
+            value={explanation}
+            onChange={handleExplanationChange}
+            margin="normal"
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ marginTop: 6 }}
+          >
+            생성
+          </Button>
+        </form>
+      </Container>
+    </>
   );
 };
 
