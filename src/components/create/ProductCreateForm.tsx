@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { ProductType } from "../../types";
 import { Button, Container, TextField, Typography } from "@mui/material";
+import { ThumbnailUploader } from ".";
 
 const ProductCreateForm = () => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
   const [explanation, setExplanation] = useState("");
+  const [thumbnail, setThumbnail] = useState<File | null>(null);
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -23,6 +25,40 @@ const ProductCreateForm = () => {
     setExplanation(event.target.value);
   };
 
+  const uploadThumbnailRequest = (productId: string, thumbnail: File) => {
+    const formData = new FormData();
+    formData.append("thumbnail", thumbnail);
+    return fetch(`/product/thumbnail/${productId}`, {
+      method: "PATCH",
+      body: formData,
+    });
+  };
+
+  const createProductRequest = (newProduct: Omit<ProductType, "id">) => {
+    return fetch("/product", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newProduct),
+    });
+  };
+
+  const handleCreateProduct = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const response = await createProductRequest({
+      name,
+      explanation,
+      price,
+    });
+    const data = await response.json();
+
+    if (thumbnail) {
+      await uploadThumbnailRequest(data.product.id, thumbnail);
+    }
+  };
+
+  /*
   const handleCreate = (event: React.FormEvent) => {
     event.preventDefault();
     const newProduct: Omit<ProductType, "id"> = {
@@ -43,7 +79,8 @@ const ProductCreateForm = () => {
         console.log("log data : ", data);
         //setProducts((prev) => [...prev, data.product]);
       });
-  };
+  }; 
+  */
 
   return (
     <>
@@ -77,8 +114,10 @@ const ProductCreateForm = () => {
           />
           <input type="submit" value="상품 만들기" />
         </form>
-        */}
+
         <form onSubmit={handleCreate}>
+        */}
+        <form onSubmit={handleCreateProduct}>
           <TextField
             label="상품 이름"
             fullWidth
@@ -102,6 +141,13 @@ const ProductCreateForm = () => {
             value={explanation}
             onChange={handleExplanationChange}
             margin="normal"
+          />
+          <ThumbnailUploader
+            value={thumbnail}
+            onChange={(file) => {
+              console.log("file log : ", file);
+              setThumbnail(file);
+            }}
           />
           <Button
             type="submit"

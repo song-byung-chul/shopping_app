@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { ProductType } from "../../types";
 import { ProductItem } from ".";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Grid } from "@mui/material";
 
 const ProductList = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
@@ -68,16 +68,16 @@ const ProductList = () => {
   }
 
   return (
-    <ul>
+    <Grid container spacing={3}>
       {products.map((product) => (
         <ProductItem
           key={product.id}
           product={product}
-          onDelete={handleDelete}
-          onUpdate={handleUpdate}
+          //onDelete={handleDelete}
+          //onUpdate={handleUpdate}
         />
       ))}
-    </ul>
+    </Grid>
   );
 };
 

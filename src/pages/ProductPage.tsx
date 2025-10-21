@@ -2,13 +2,30 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useProductContext } from "../contexts/ProductContext";
+import { API_SERVER_DOMAIN } from "../constants";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Typography,
+} from "@mui/material";
 
+import { ProductType } from "../types";
+
+/*
 type ProductType = {
   id: string;
   name: string;
   explanation: string;
   price: number;
 };
+*/
 
 const ProductPage = () => {
   /*
@@ -46,12 +63,27 @@ const ProductPage = () => {
   }
 
   return (
-    <div>
+    <>
+      <Container maxWidth="sm">
+        {/*
+        <div>
       <h1>상품 상세 페이지</h1>
       <h1>{product?.name}</h1>
       <p>{product?.explanation}</p>
       <span>{product?.price}</span>
     </div>
+         */}
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
+          {product?.thumbnail && (
+            <img
+              src={`${API_SERVER_DOMAIN}/${product.thumbnail}`}
+              alt={product?.name}
+              style={{ width: "100%", maxWidth: 400 }}
+            />
+          )}
+        </Box>
+      </Container>
+    </>
   );
 };
 
