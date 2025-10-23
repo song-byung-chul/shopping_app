@@ -2,14 +2,33 @@
 
 import { useState } from "react";
 import { ProductType } from "../../types";
-import { Button, Container, TextField, Typography } from "@mui/material";
 import { ThumbnailUploader } from ".";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Card,
+  CardContent,
+  CardMedia,
+  Container,
+  FormControl,
+  Grid,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const ProductCreateForm = () => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
   const [explanation, setExplanation] = useState("");
   const [thumbnail, setThumbnail] = useState<File | null>(null);
+  const [createdProductId, setCreatedProductId] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -56,6 +75,14 @@ const ProductCreateForm = () => {
     if (thumbnail) {
       await uploadThumbnailRequest(data.product.id, thumbnail);
     }
+
+    setCreatedProductId(data.product.id);
+    setIsModalOpen(true);
+  };
+
+  const handlePushProductPage = () => {
+    setIsModalOpen(false);
+    navigate(`/product/${createdProductId}`);
   };
 
   /*
@@ -160,6 +187,26 @@ const ProductCreateForm = () => {
           </Button>
         </form>
       </Container>
+
+      <Dialog
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        aria-labelledby="resopnsive-dialog-title"
+      >
+        <DialogTitle id="resopnsive-dialog-title">
+          상품을 성공적으로 추가했습니다.
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            확인을 누르면 상품상세 페이지로 이동합니다.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handlePushProductPage} autoFocus>
+            확인
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

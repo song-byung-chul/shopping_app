@@ -1,8 +1,9 @@
 // ProductPage.tsx
+
+import { Delete, Edit } from "@mui/icons-material";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useProductContext } from "../contexts/ProductContext";
-import { API_SERVER_DOMAIN } from "../constants";
+import { useParams, useNavigate } from "react-router-dom";
+//import { useProductContext } from "../contexts/ProductContext";
 import {
   Box,
   Button,
@@ -15,8 +16,8 @@ import {
   DialogTitle,
   Typography,
 } from "@mui/material";
-
 import { ProductType } from "../types";
+import { API_SERVER_DOMAIN } from "../constants";
 
 /*
 type ProductType = {
@@ -42,6 +43,7 @@ const ProductPage = () => {
   }, [context]);
   */
 
+  const navigate = useNavigate();
   const { productId } = useParams<{ productId: string }>();
   const [product, setProduct] = useState<ProductType | null>(null);
   //const products = useProductContext();
@@ -51,6 +53,12 @@ const ProductPage = () => {
     (product) => product.id === parseInt(productId!, 10)
   );*/
 
+  const handlePushPurchasePage = () => {
+    if (productId) {
+      navigate(`/purchase/${productId}`);
+    }
+  };
+
   useEffect(() => {
     fetch(`/product/${productId}`)
       .then((response) => response.json())
@@ -59,7 +67,7 @@ const ProductPage = () => {
 
   //if (!foundProduct) {
   if (!product) {
-    return <h1>존재하지 않는 상품입니다.</h1>;
+    return <h1>찾으시는 상품이 없습니다.</h1>;
   }
 
   return (
@@ -82,6 +90,39 @@ const ProductPage = () => {
             />
           )}
         </Box>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: 2,
+          }}
+        >
+          <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+            {product?.name}
+          </Typography>
+          <ButtonGroup orientation="horizontal">
+            <Button variant="text" onClick={() => null} color="error">
+              <Delete />
+            </Button>
+            <Button variant="text" onClick={() => null} color="info">
+              <Edit />
+            </Button>
+          </ButtonGroup>
+        </Box>
+        <Typography variant="h6" sx={{ marginBottom: 4 }}>
+          {product?.price.toLocaleString("KO-kr")}원
+        </Typography>
+        <Typography variant="body1" sx={{ marginBottom: 4 }}>
+          {product?.explanation}
+        </Typography>
+
+        <ButtonGroup orientation="vertical" fullWidth>
+          <Button variant="outlined">장바구니 담기</Button>
+          <Button variant="contained" onClick={handlePushPurchasePage}>
+            구매하기
+          </Button>
+        </ButtonGroup>
       </Container>
     </>
   );
