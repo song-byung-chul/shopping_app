@@ -21,6 +21,7 @@ import { useCookies } from "react-cookie";
 //import { Delete, Edit } from "@mui/icons-material";
 import Edit from "@mui/icons-material/Edit";
 import Delete from "@mui/icons-material/Delete";
+import { useCart } from "../hooks";
 
 /*
 type ProductType = {
@@ -48,11 +49,13 @@ const ProductPage = () => {
 
   const navigate = useNavigate();
   const { productId } = useParams<{ productId: string }>();
-  const [cookies, setCookies] = useCookies(["cart"]);
+  //const [cookies, setCookies] = useCookies(["cart"]);
+  //const cartItems = cookies.cart as ProductType[];
+  const { addCarts } = useCart();
+
   const [product, setProduct] = useState<ProductType | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModal, setIsDeleteModal] = useState(false);
-  const cartItems = cookies.cart as ProductType[];
 
   //const products = useProductContext();
   //const [products] = useProductContext();
@@ -61,11 +64,19 @@ const ProductPage = () => {
     (product) => product.id === parseInt(productId!, 10)
   );*/
 
+  /*
   const handleAddCart = () => {
     const nextValue = cartItems ? [...cartItems, product] : [product];
 
     setCookies("cart", nextValue, { path: "/" });
     setIsModalOpen(true);
+  };*/
+
+  const handleAddCart = () => {
+    if (product) {
+      addCarts(product.id);
+      setIsModalOpen(true);
+    }
   };
 
   const handlePushPurchasePage = () => {

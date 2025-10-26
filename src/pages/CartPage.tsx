@@ -20,11 +20,13 @@ import {
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CartItem } from "../components/cart";
+import { useCart } from "../hooks";
 
 const CartPage = () => {
   const navigate = useNavigate();
-  const [cookies] = useCookies(["cart"]);
-  const cartItems = (cookies.cart as ProductType[]) || null;
+  //const [cookies] = useCookies(["cart"]);
+  //const cartItems = (cookies.cart as ProductType[]) || null;
+  const { carts } = useCart();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handlePurchaseProduct = (event: React.FormEvent) => {
@@ -65,13 +67,13 @@ const CartPage = () => {
               장바구니
             </Typography>
 
-            {!cartItems || cartItems.length === 0 ? (
+            {!carts || carts.length === 0 ? (
               <Typography variant="body1">
                 장바구니에 담긴 상품이 없습니다.
               </Typography>
             ) : (
               //<>CartIItem 컴포넌트를 구현해봅시다.</>
-              cartItems?.map((cart) => <CartItem key={cart.id} cart={cart} />)
+              carts?.map((cart) => <CartItem key={cart.id} cart={cart} />)
             )}
           </Grid>
 
