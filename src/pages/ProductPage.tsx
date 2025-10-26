@@ -1,6 +1,5 @@
 // ProductPage.tsx
 
-import { Delete, Edit } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 //import { useProductContext } from "../contexts/ProductContext";
@@ -18,6 +17,10 @@ import {
 } from "@mui/material";
 import { ProductType } from "../types";
 import { API_SERVER_DOMAIN } from "../constants";
+import { useCookies } from "react-cookie";
+//import { Delete, Edit } from "@mui/icons-material";
+import Edit from "@mui/icons-material/Edit";
+import Delete from "@mui/icons-material/Delete";
 
 /*
 type ProductType = {
@@ -45,7 +48,12 @@ const ProductPage = () => {
 
   const navigate = useNavigate();
   const { productId } = useParams<{ productId: string }>();
+  const [cookies, setCookies] = useCookies(["cart"]);
   const [product, setProduct] = useState<ProductType | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModal, setIsDeleteModal] = useState(false);
+  const cartItems = cookies.cart as ProductType[];
+
   //const products = useProductContext();
   //const [products] = useProductContext();
   /*
@@ -53,10 +61,21 @@ const ProductPage = () => {
     (product) => product.id === parseInt(productId!, 10)
   );*/
 
+  const handleAddCart = () => {
+    const nextValue = cartItems ? [...cartItems, product] : [product];
+
+    setCookies("cart", nextValue, { path: "/" });
+    setIsModalOpen(true);
+  };
+
   const handlePushPurchasePage = () => {
     if (productId) {
       navigate(`/purchase/${productId}`);
     }
+  };
+
+  const handlePushCartPage = () => {
+    navigate("/cart");
   };
 
   useEffect(() => {
@@ -102,7 +121,11 @@ const ProductPage = () => {
             {product?.name}
           </Typography>
           <ButtonGroup orientation="horizontal">
-            <Button variant="text" onClick={() => null} color="error">
+            <Button
+              variant="text"
+              onClick={() => setIsDeleteModal(true)}
+              color="error"
+            >
               <Delete />
             </Button>
             <Button variant="text" onClick={() => null} color="info">
@@ -118,12 +141,52 @@ const ProductPage = () => {
         </Typography>
 
         <ButtonGroup orientation="vertical" fullWidth>
-          <Button variant="outlined">장바구니 담기</Button>
+          <Button variant="outlined" onClick={handleAddCart}>
+            장바구니 담기
+          </Button>
           <Button variant="contained" onClick={handlePushPurchasePage}>
             구매하기
           </Button>
         </ButtonGroup>
       </Container>
+
+      <Dialog
+        open={isDeleteModal}
+        onClose={() => setIsDeleteModal(false)}
+        aria-labelledby="responsive-dialog-title"
+      >
+        <DialogTitle id="responsive-dialog-title">
+          상품을 정말로 삭제하시겠습니까?
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>이 작업은 되돌릴 수 없습니다.</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsDeleteModal(false)}>아니요</Button>
+          <Button autoFocus>네</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        aria-labelledby="responsive-dialog-title"
+      >
+        <DialogTitle id="responsive-dialog-title">
+          장바구니에 성공적으로 추가했습니다.
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            장바구니 페이지로 이동하시겠습니까?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsModalOpen(false)}>아니요</Button>
+          <Button onClick={handlePushCartPage} autoFocus>
+            네
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
