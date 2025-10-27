@@ -6,8 +6,6 @@ import {
   Box,
   Button,
   Card,
-  ButtonGroup,
-  cardActionAreaClasses,
   Container,
   Dialog,
   DialogActions,
@@ -28,6 +26,12 @@ const CartPage = () => {
   //const cartItems = (cookies.cart as ProductType[]) || null;
   const { carts } = useCart();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // 장바구니 총금액
+  //const totalPrice = 0;
+  const totalPrice = carts.reduce(
+    (prev, cur) => prev + cur.price * cur.count,
+    0
+  );
 
   const handlePurchaseProduct = (event: React.FormEvent) => {
     event.preventDefault();
@@ -89,13 +93,13 @@ const CartPage = () => {
             >
               <Card sx={{ padding: 2 }}>
                 <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
-                  총 상품 가격: 0원
+                  총 상품 가격: {totalPrice}원
                 </Typography>
                 <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
                   배송비: 평생 무료
                 </Typography>
                 <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
-                  총 결제 금액: 0원
+                  총 결제 금액: {totalPrice}원
                 </Typography>
                 <Button
                   variant="contained"

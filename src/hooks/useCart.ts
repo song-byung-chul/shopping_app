@@ -1,16 +1,20 @@
 // c:/Dev/shopping_app/client/src/hooks/useCart.ts
+
 import { useEffect, useState } from "react";
 import { useMemo } from "react";
 import { useCookies } from "react-cookie";
 import { ProductType } from "../types";
-//import { getProduct } from "../utils/api";
+import { getProduct } from "../utils/api";
 
-const COOKIE_KEY = "cart";
+type CartType = ProductType & { count: number };
+
+const COOKIE_KEY = "cart" as const;
 
 const useCart = () => {
   const [cookies, setCookies] = useCookies([COOKIE_KEY]);
   // TODO: 각 ID를 서버로부터 가져오는 방식으로 변경
-  const [carts, setCarts] = useState<ProductType[]>([]);
+  const [carts, setCarts] = useState<CartType[]>([]);
+  //const [carts, setCarts] = useState<ProductType[]>([]);
   //const cart = (cookies.cart as ProductType[]) ?? [];
 
   // TODO: 상품정보 자체를 받는 것이 아니라 ID를 넘겨받아서 저장해야 한다.
@@ -34,6 +38,7 @@ const useCart = () => {
     });
   };
 
+  // 장바구니 개수 추가, 제거
   const changeCount = (productId: string, mode: "increase" | "decrease") => {
     const index = productIds.indexOf(productId);
     if (index === -1) {
@@ -43,7 +48,7 @@ const useCart = () => {
     if (mode === "decrease") {
       const tempArr = [...productIds];
       tempArr.splice(index, 1);
-
+      // 상품이 0 이면 안됨... tempArr에서 productId를 포함하고 있지 않으면 함수를 종료
       if (!tempArr.includes(productId)) {
         return;
       }
@@ -60,25 +65,27 @@ const useCart = () => {
     }
   };
 
+  /*
   const getProductById = (id: string) => {
     return fetch(`/product/${id}`).then((response) => response.json());
   };
+  */
 
+  /*
   useEffect(() => {
     if (productIds && productIds.length) {
       const requestList: Array<Promise<any>> = [];
       productIds.forEach((id) => {
         requestList.push(getProductById(id));
       });
-
       Promise.all(requestList).then((response) => {
         const cartList: ProductType[] = response.map((item) => item.product);
         setCarts(cartList);
       });
     }
   }, [productIds]);
+  */
 
-  /*
   useEffect(() => {
     if (productIds && productIds.length) {
       const requestList: Array<Promise<any>> = [];
@@ -88,8 +95,10 @@ const useCart = () => {
       );
 
       Array.from(requestIds.keys()).forEach((id) => {
+        //requestList.push(getProductById(id));
         requestList.push(getProduct(id));
       });
+
       Promise.all(requestList).then((responseList) => {
         const cartsData: CartType[] = responseList.map((response) => ({
           ...response.data.product,
@@ -97,16 +106,20 @@ const useCart = () => {
         }));
         setCarts(cartsData);
       });
+
+      /*
+      Promise.all(requestList).then((response) => {
+        const cartList: ProductType[] = response.map((item) => item.product);
+        setCarts(cartList);
+      });
+      */
     }
   }, [productIds]);
-  */
 
   return {
     carts,
     addCarts,
-    //carts,
-    //addCarts,
-    //changeCount,
+    changeCount,
   };
 };
 export default useCart;
