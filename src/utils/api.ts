@@ -1,5 +1,6 @@
-import axios, { type AxiosResponse } from "axios";
+// c:/Dev/shopping_app/client/src/utils/api.ts
 
+import axios, { type AxiosResponse } from "axios";
 import type { ProductType } from "../types";
 
 type ReturnType<T> = Promise<AxiosResponse<T>>;

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ProductType } from "../../types";
 import { ProductItem } from ".";
 import { CircularProgress, Grid } from "@mui/material";
+import { getProducts } from "../../utils/api";
 
 const ProductList = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
@@ -51,6 +52,7 @@ const ProductList = () => {
   };
 
   // API서버에서 상품목록 가져오기
+  /*
   useEffect(() => {
     setIsLoading(true);
     //fetch("http://localhost:3090/product") <== clent/package.json에 proxy설정
@@ -60,6 +62,16 @@ const ProductList = () => {
         console.log(data);
         setProducts(data.products);
       })
+      .finally(() => setIsLoading(false));
+  }, []);
+  */
+
+  // API(api.ts)를 한곳에 묶어서 관리하기(Axios를 활용한 버전)
+  useEffect(() => {
+    setIsLoading(true);
+
+    getProducts()
+      .then((response) => setProducts(response.data.products))
       .finally(() => setIsLoading(false));
   }, []);
 

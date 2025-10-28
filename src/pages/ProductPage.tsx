@@ -1,8 +1,5 @@
 // ProductPage.tsx
 
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-//import { useProductContext } from "../contexts/ProductContext";
 import {
   Box,
   Button,
@@ -15,6 +12,9 @@ import {
   DialogTitle,
   Typography,
 } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+//import { useProductContext } from "../contexts/ProductContext";
 import { ProductType } from "../types";
 import { API_SERVER_DOMAIN } from "../constants";
 import { useCookies } from "react-cookie";
@@ -22,6 +22,9 @@ import { useCookies } from "react-cookie";
 import Edit from "@mui/icons-material/Edit";
 import Delete from "@mui/icons-material/Delete";
 import { useCart } from "../hooks";
+import { deleteProduct, getProduct } from "../utils/api";
+//import useAsync from "../hooks/useAsync";
+import { NotFoundPage } from ".";
 
 /*
 type ProductType = {
@@ -52,6 +55,17 @@ const ProductPage = () => {
   //const [cookies, setCookies] = useCookies(["cart"]);
   //const cartItems = cookies.cart as ProductType[];
   const { addCarts } = useCart();
+
+  /*
+  const { loading: getProductLoading, data } = useAsync(() =>
+    getProduct(productId!)
+  );
+  
+  const { request: deleteProductRequest, loading: deleteProductLoading } =
+    useAsync(() => deleteProduct(productId!), {
+      initialRequest: false,
+    });
+  */
 
   const [product, setProduct] = useState<ProductType | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -85,20 +99,46 @@ const ProductPage = () => {
     }
   };
 
+  const handlePushHomePage = () => {
+    navigate(`/`);
+  };
+
   const handlePushCartPage = () => {
     navigate("/cart");
   };
 
+  const handleDeleteProduct = async () => {
+    setIsDeleteModal(false);
+    //await deleteProductRequest();
+    handlePushHomePage();
+  };
+
+  /*
   useEffect(() => {
     fetch(`/product/${productId}`)
       .then((response) => response.json())
       .then((data) => setProduct(data.product));
+  }, [productId]);
+  */
+  // API(api.ts)를 한곳에 묶어서 관리하기(Axios를 활용한 버전)
+  useEffect(() => {
+    if (productId) {
+      getProduct(productId).then((response) =>
+        setProduct(response.data.product)
+      );
+    }
   }, [productId]);
 
   //if (!foundProduct) {
   if (!product) {
     return <h1>찾으시는 상품이 없습니다.</h1>;
   }
+  //if (!productId || !data) return <NotFoundPage />;
+  /*
+  if (getProductLoading || deleteProductLoading) return <CircularProgress />;
+
+  const product = data.data.product;
+  */
 
   return (
     <>
@@ -139,7 +179,11 @@ const ProductPage = () => {
             >
               <Delete />
             </Button>
-            <Button variant="text" onClick={() => null} color="info">
+            <Button
+              variant="text"
+              // onClick={handlePushPurchasePage}
+              color="info"
+            >
               <Edit />
             </Button>
           </ButtonGroup>

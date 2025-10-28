@@ -1,7 +1,5 @@
 // c:/Dev/shopping_app/client/src/pages/PurchasePage.tsx
 
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import {
   Button,
   Card,
@@ -16,9 +14,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import type { ProductType } from "../types";
 import { API_SERVER_DOMAIN } from "../constants";
 import { PurchaseForm } from "../components/purchase";
+import { getProduct } from "../utils/api";
 
 type ParamsType = {
   productId: string;
@@ -28,10 +29,20 @@ const PurchasePage = () => {
   const { productId } = useParams<ParamsType>();
   const [product, setProduct] = useState<ProductType | null>(null);
 
+  /*
   useEffect(() => {
     fetch(`/product/${productId}`)
       .then((response) => response.json())
       .then((data) => setProduct(data.product));
+  }, [productId]);
+  */
+  // API(api.ts)를 한곳에 묶어서 관리하기(Axios를 활용한 버전)
+  useEffect(() => {
+    if (productId) {
+      getProduct(productId).then((response) =>
+        setProduct(response.data.product)
+      );
+    }
   }, [productId]);
 
   if (!product) {

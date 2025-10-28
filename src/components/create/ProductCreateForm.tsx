@@ -1,8 +1,5 @@
 // src/components/create/ProductCreateForm.tsx
 
-import { useState } from "react";
-import { ProductType } from "../../types";
-import { ThumbnailUploader } from ".";
 import {
   Button,
   Dialog,
@@ -19,7 +16,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
+import { ProductType } from "../../types";
+import { ThumbnailUploader } from ".";
 import { useNavigate } from "react-router-dom";
+import { createProduct, modifyThumbnail } from "../../utils/api";
 
 const ProductCreateForm = () => {
   const [name, setName] = useState("");
@@ -63,6 +64,7 @@ const ProductCreateForm = () => {
     });
   };
 
+  /*
   const handleCreateProduct = async (event: React.FormEvent) => {
     event.preventDefault();
     const response = await createProductRequest({
@@ -78,6 +80,23 @@ const ProductCreateForm = () => {
 
     setCreatedProductId(data.product.id);
     setIsModalOpen(true);
+  };
+  */
+
+  const handleCreateProduct = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const {
+      data: { product },
+    } = await createProduct({
+      name,
+      explanation,
+      price,
+    });
+
+    if (thumbnail) {
+      await modifyThumbnail(product.id, thumbnail);
+    }
   };
 
   const handlePushProductPage = () => {
