@@ -1,25 +1,22 @@
 // c:/Dev/shopping_app/client/src/pages/PurchasePage.tsx
 
 import {
-  Button,
   Card,
   CardContent,
   CardMedia,
+  CircularProgress,
   Container,
-  FormControl,
   Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+//import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { ProductType } from "../types";
 import { API_SERVER_DOMAIN } from "../constants";
 import { PurchaseForm } from "../components/purchase";
 import { getProduct } from "../utils/api";
+import useAsync from "../hooks/useAsync";
+import { NotFoundPage } from ".";
 
 type ParamsType = {
   productId: string;
@@ -27,7 +24,8 @@ type ParamsType = {
 
 const PurchasePage = () => {
   const { productId } = useParams<ParamsType>();
-  const [product, setProduct] = useState<ProductType | null>(null);
+  //const [product, setProduct] = useState<ProductType | null>(null);
+  const { data, loading } = useAsync(() => getProduct(productId!));
 
   /*
   useEffect(() => {
@@ -37,6 +35,7 @@ const PurchasePage = () => {
   }, [productId]);
   */
   // API(api.ts)를 한곳에 묶어서 관리하기(Axios를 활용한 버전)
+  /*
   useEffect(() => {
     if (productId) {
       getProduct(productId).then((response) =>
@@ -48,6 +47,11 @@ const PurchasePage = () => {
   if (!product) {
     return <h1>찾으시는 상품이 없습니다.</h1>;
   }
+    */
+
+  if (loading) return <CircularProgress />;
+  if (!data) return <NotFoundPage />;
+  const product = data.data.product;
 
   return (
     <Container maxWidth="sm">

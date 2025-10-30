@@ -20,6 +20,7 @@ import { useState } from "react";
 import { ProductType } from "../../types";
 import { ThumbnailUploader } from ".";
 import { useNavigate } from "react-router-dom";
+import useAsync from "../../hooks/useAsync";
 import { createProduct, modifyThumbnail } from "../../utils/api";
 
 const ProductCreateForm = () => {
@@ -45,6 +46,15 @@ const ProductCreateForm = () => {
     setExplanation(event.target.value);
   };
 
+  const { request: createProductRequest } = useAsync(createProduct, {
+    initialRequest: false,
+  });
+
+  const { request: thumbnailUploadRequest } = useAsync(modifyThumbnail, {
+    initialRequest: false,
+  });
+
+  /*
   const uploadThumbnailRequest = (productId: string, thumbnail: File) => {
     const formData = new FormData();
     formData.append("thumbnail", thumbnail);
@@ -63,6 +73,7 @@ const ProductCreateForm = () => {
       body: JSON.stringify(newProduct),
     });
   };
+  */
 
   /*
   const handleCreateProduct = async (event: React.FormEvent) => {
@@ -82,22 +93,6 @@ const ProductCreateForm = () => {
     setIsModalOpen(true);
   };
   */
-
-  const handleCreateProduct = async (event: React.FormEvent) => {
-    event.preventDefault();
-
-    const {
-      data: { product },
-    } = await createProduct({
-      name,
-      explanation,
-      price,
-    });
-
-    if (thumbnail) {
-      await modifyThumbnail(product.id, thumbnail);
-    }
-  };
 
   const handlePushProductPage = () => {
     setIsModalOpen(false);
@@ -127,6 +122,26 @@ const ProductCreateForm = () => {
       });
   }; 
   */
+
+  const handleCreateProduct = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const createProductResponse = await createProductRequest({
+      name,
+      explanation,
+      price,
+    });
+
+    if (thumbnail) {
+      await thumbnailUploadRequest(
+        createProductResponse.data.product.id,
+        thumbnail
+      );
+    }
+
+    setCreatedProductId(createProductResponse.data.product.id);
+    setIsModalOpen(true);
+  };
 
   return (
     <>
@@ -191,7 +206,7 @@ const ProductCreateForm = () => {
           <ThumbnailUploader
             value={thumbnail}
             onChange={(file) => {
-              console.log("file log : ", file);
+              //console.log("file log : ", file);
               setThumbnail(file);
             }}
           />

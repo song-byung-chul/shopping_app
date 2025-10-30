@@ -1,14 +1,22 @@
 // ProductList.tsx
 
 import { useEffect, useState } from "react";
-import { ProductType } from "../../types";
+//import { ProductType } from "../../types";
 import { ProductItem } from ".";
 import { CircularProgress, Grid } from "@mui/material";
+import { NotFoundPage } from "../../pages";
 import { getProducts } from "../../utils/api";
+import useAsync from "../../hooks/useAsync";
 
 const ProductList = () => {
+  const { loading, data } = useAsync(getProducts);
+  if (loading) return <CircularProgress />;
+  if (!data) return <NotFoundPage />;
+
+  /*
   const [products, setProducts] = useState<ProductType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
 
   const handleDelete = (id: string) => {
     fetch(`/product/${id}`, { method: "DELETE" }).then((response) => {
@@ -17,6 +25,7 @@ const ProductList = () => {
       }
     });
   };
+  */
 
   /*
       const handleUpdate = (id: number) => {
@@ -32,7 +41,7 @@ const ProductList = () => {
         );
       };
       */
-
+  /*
   const handleUpdate = (updateProduct: ProductType) => {
     fetch(`/product/${updateProduct.id}`, {
       method: "PATCH",
@@ -50,6 +59,7 @@ const ProductList = () => {
       }
     });
   };
+  */
 
   // API서버에서 상품목록 가져오기
   /*
@@ -67,6 +77,7 @@ const ProductList = () => {
   */
 
   // API(api.ts)를 한곳에 묶어서 관리하기(Axios를 활용한 버전)
+  /* useAsync.ts 로 인해 블럭 처리
   useEffect(() => {
     setIsLoading(true);
 
@@ -78,9 +89,11 @@ const ProductList = () => {
   if (isLoading) {
     return <CircularProgress />;
   }
+    */
 
   return (
     <Grid container spacing={3}>
+      {/*
       {products.map((product) => (
         <ProductItem
           key={product.id}
@@ -88,6 +101,11 @@ const ProductList = () => {
           //onDelete={handleDelete}
           //onUpdate={handleUpdate}
         />
+      ))}
+      */}
+
+      {data.data.products.map((product) => (
+        <ProductItem key={product.id} product={product} />
       ))}
     </Grid>
   );

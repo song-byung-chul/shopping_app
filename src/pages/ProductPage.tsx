@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   ButtonGroup,
+  CircularProgress,
   Container,
   Dialog,
   DialogActions,
@@ -16,15 +17,15 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 //import { useProductContext } from "../contexts/ProductContext";
 import { ProductType } from "../types";
-import { API_SERVER_DOMAIN } from "../constants";
-import { useCookies } from "react-cookie";
+//import { useCookies } from "react-cookie";
 //import { Delete, Edit } from "@mui/icons-material";
 import Edit from "@mui/icons-material/Edit";
 import Delete from "@mui/icons-material/Delete";
 import { useCart } from "../hooks";
 import { deleteProduct, getProduct } from "../utils/api";
-//import useAsync from "../hooks/useAsync";
+import useAsync from "../hooks/useAsync";
 import { NotFoundPage } from ".";
+import { API_SERVER_DOMAIN } from "../constants";
 
 /*
 type ProductType = {
@@ -56,18 +57,16 @@ const ProductPage = () => {
   //const cartItems = cookies.cart as ProductType[];
   const { addCarts } = useCart();
 
-  /*
+  //const [product, setProduct] = useState<ProductType | null>(null);
   const { loading: getProductLoading, data } = useAsync(() =>
     getProduct(productId!)
   );
-  
+
   const { request: deleteProductRequest, loading: deleteProductLoading } =
     useAsync(() => deleteProduct(productId!), {
       initialRequest: false,
     });
-  */
 
-  const [product, setProduct] = useState<ProductType | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModal, setIsDeleteModal] = useState(false);
 
@@ -109,7 +108,7 @@ const ProductPage = () => {
 
   const handleDeleteProduct = async () => {
     setIsDeleteModal(false);
-    //await deleteProductRequest();
+    await deleteProductRequest();
     handlePushHomePage();
   };
 
@@ -121,6 +120,7 @@ const ProductPage = () => {
   }, [productId]);
   */
   // API(api.ts)를 한곳에 묶어서 관리하기(Axios를 활용한 버전)
+  /* useAsync.ts 로 인해 블럭 처리
   useEffect(() => {
     if (productId) {
       getProduct(productId).then((response) =>
@@ -128,17 +128,18 @@ const ProductPage = () => {
       );
     }
   }, [productId]);
+  */
 
   //if (!foundProduct) {
+  /*
   if (!product) {
     return <h1>찾으시는 상품이 없습니다.</h1>;
-  }
-  //if (!productId || !data) return <NotFoundPage />;
-  /*
+  }*/
+
+  if (!productId || !data) return <NotFoundPage />;
   if (getProductLoading || deleteProductLoading) return <CircularProgress />;
 
   const product = data.data.product;
-  */
 
   return (
     <>
